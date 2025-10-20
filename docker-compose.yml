@@ -1,0 +1,37 @@
+version: '3.1'
+services:
+  odoo:
+    image: odoo:18.0
+    container_name: odoo18-purchase
+    depends_on:
+      - db
+    ports:
+      - "8020:8069"
+    volumes:
+      - ./addons:/mnt/extra-addons
+      - ./config:/etc/odoo
+      - ./data:/var/lib/odoo
+      - ./logs:/var/log/odoo
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=odoo
+    user: "${UID:-1000}:${GID:-1000}"
+    networks:
+      - odoo-network
+
+  db:
+    image: postgres:15
+    container_name: odoo18-db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    networks:
+      - odoo-network
+
+networks:
+  odoo-network:
+    driver: bridge
