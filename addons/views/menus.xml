@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_purchase_process_root" name="Processus Achat" sequence="10"/>
+    <menuitem id="menu_purchase_projects" name="Projets" parent="menu_purchase_process_root" sequence="10"/>
+    <menuitem id="menu_purchase_chantiers" name="Chantiers" parent="menu_purchase_process_root" sequence="20"/>
+    <menuitem id="menu_purchase_demandes" name="Demandes d'Achat" parent="menu_purchase_process_root" sequence="30"/>
+</odoo>

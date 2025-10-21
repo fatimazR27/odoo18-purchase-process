@@ -1,103 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <!-- Demande Achat List View -->
-        <record id="view_demande_achat_tree" model="ir.ui.view">
-            <field name="name">purchase.process.demande.achat.tree</field>
-            <field name="model">purchase.process.demande.achat</field>
-            <field name="arch" type="xml">
-                <list>
-                    <field name="name"/>
-                    <field name="chantier_id"/>
-                    <field name="project_id"/>
-                    <field name="article"/>
-                    <field name="quantite"/>
-                    <field name="urgence"/>
-                    <field name="date_besoin"/>
-                    <field name="state"/>
-                    <field name="chef_chantier_id"/>
-                </list>
-            </field>
-        </record>
+    <!-- Vue List pour Demandes d'Achat -->
+    <record id="view_demande_achat_tree" model="ir.ui.view">
+        <field name="name">purchase.process.demande.achat.tree</field>
+        <field name="model">purchase.process.demande.achat</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="chantier_id"/>
+                <field name="article"/>
+                <field name="quantite"/>
+                <field name="unite_mesure"/>
+                <field name="state"/>
+                <field name="urgence"/>
+                <field name="date_besoin"/>
+                <field name="chef_chantier_id"/>
+            </list>
+        </field>
+    </record>
 
-        <!-- Demande Achat Form View -->
-        <record id="view_demande_achat_form" model="ir.ui.view">
-            <field name="name">purchase.process.demande.achat.form</field>
-            <field name="model">purchase.process.demande.achat</field>
-            <field name="arch" type="xml">
-                <form>
-                    <header>
-                        <field name="state" widget="statusbar"/>
-                        <button name="action_envoyer_validation" string="Envoyer en Validation" type="object" class="btn-primary"/>
-                        <button name="action_valider_technique" string="Valider Technique" type="object" class="btn-primary"/>
-                        <button name="action_creer_bon_commande" string="Créer Bon de Commande" type="object" class="btn-primary"/>
-                        <button name="action_valider_reception" string="Valider Réception" type="object" class="btn-primary"/>
-                        <button name="action_rejeter" string="Rejeter" type="object" class="btn-secondary"/>
-                    </header>
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="name" readonly="1"/>
-                                <field name="chantier_id" required="1"/>
-                                <field name="project_id" readonly="1"/>
-                                <field name="article" required="1"/>
-                                <field name="quantite" required="1"/>
-                                <field name="unite_mesure"/>
-                            </group>
-                            <group>
-                                <field name="urgence"/>
-                                <field name="date_besoin" required="1"/>
-                                <field name="chef_chantier_id"/>
-                                <field name="state" readonly="1"/>
-                            </group>
-                        </group>
-                        <group>
-                            <field name="description" nolabel="1" placeholder="Description détaillée de l'article ou service demandé..."/>
-                        </group>
-                    </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids"/>
-                        <field name="activity_ids"/>
-                        <field name="message_ids"/>
+    <!-- Vue Form pour Demandes d'Achat -->
+    <record id="view_demande_achat_form" model="ir.ui.view">
+        <field name="name">purchase.process.demande.achat.form</field>
+        <field name="model">purchase.process.demande.achat</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <!-- En-tête -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" class="oe_inline"/>
+                        </h1>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,technical_validation,approved,purchase_order,received,done" class="oe_right"/>
                     </div>
-                </form>
-            </field>
-        </record>
-
-        <!-- Demande Achat Search View -->
-        <record id="view_demande_achat_search" model="ir.ui.view">
-            <field name="name">purchase.process.demande.achat.search</field>
-            <field name="model">purchase.process.demande.achat</field>
-            <field name="arch" type="xml">
-                <search>
-                    <field name="name"/>
-                    <field name="article"/>
-                    <field name="chantier_id"/>
-                    <field name="project_id"/>
-                    <field name="chef_chantier_id"/>
-                    <filter string="En Attente Validation" name="technical_validation" domain="[('state','=','technical_validation')]"/>
-                    <filter string="Approuvées" name="approved" domain="[('state','=','approved')]"/>
-                    <filter string="Urgentes" name="urgent" domain="[('urgence','=','urgent')]"/>
-                    <group expand="0" string="Group By">
-                        <filter string="Chantier" name="group_by_chantier" context="{'group_by': 'chantier_id'}"/>
-                        <filter string="État" name="group_by_state" context="{'group_by': 'state'}"/>
-                        <filter string="Urgence" name="group_by_urgence" context="{'group_by': 'urgence'}"/>
+                    
+                    <group>
+                        <group>
+                            <field name="chantier_id" required="1"/>
+                            <field name="project_id" readonly="1"/>
+                            <field name="article" required="1" placeholder="Article ou service demandé..."/>
+                            <field name="description" placeholder="Description détaillée de l'article ou service..."/>
+                        </group>
+                        <group>
+                            <field name="quantite" required="1"/>
+                            <field name="unite_mesure" required="1"/>
+                            <field name="urgence"/>
+                            <field name="date_besoin" required="1"/>
+                            <field name="chef_chantier_id" readonly="1"/>
+                        </group>
                     </group>
-                </search>
-            </field>
-        </record>
+                    
+                    <!-- Section validation technique -->
+                    <group string="Validation Technique" invisible="state in ['draft', 'cancel']">
+                        <group>
+                            <field name="directeur_technique_id" readonly="1"/>
+                            <field name="date_validation_technique" readonly="1"/>
+                        </group>
+                        <field name="notes_validation" readonly="1" placeholder="Notes de validation technique..."/>
+                    </group>
+                    
+                    <!-- Section réception -->
+                    <group string="Réception" invisible="state not in ['received', 'done']">
+                        <group>
+                            <field name="responsable_reception" readonly="1"/>
+                            <field name="date_reception" readonly="1"/>
+                        </group>
+                        <field name="notes_reception" readonly="1" placeholder="Notes de réception..."/>
+                    </group>
+                    
+                    <!-- Boutons d'action selon le workflow -->
+                    <footer>
+                        <button name="action_envoyer_validation" string="Envoyer en Validation" type="object" 
+                                class="btn-primary" invisible="state != 'draft'"/>
+                        <button name="action_valider_technique" string="Valider Technique" type="object" 
+                                class="btn-primary" invisible="state != 'technical_validation'"/>
+                        <button name="action_rejeter" string="Rejeter" type="object" 
+                                class="btn-secondary" invisible="state != 'technical_validation'"/>
+                        <button name="action_creer_bon_commande" string="Créer Bon de Commande" type="object" 
+                                class="btn-primary" invisible="state != 'approved'"/>
+                        <button name="action_valider_reception" string="Valider Réception" type="object" 
+                                class="btn-primary" invisible="state != 'purchase_order'"/>
+                        <button name="action_terminer" string="Terminer" type="object" 
+                                class="btn-primary" invisible="state != 'received'"/>
+                        <button name="action_annuler" string="Annuler" type="object" 
+                                class="btn-secondary" invisible="state in ['done', 'cancel']"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-        <!-- Demande Achat Action -->
-        <record id="action_demande_achat" model="ir.actions.act_window">
-            <field name="name">Demandes d'Achat</field>
-            <field name="res_model">purchase.process.demande.achat</field>
-            <field name="view_mode">list,form</field>
-            <field name="context">{"search_default_technical_validation": 1}</field>
-            <field name="help" type="html">
-                <p class="o_view_nocontent_smiling_face">
-                    Créer une nouvelle demande d'achat
-                </p>
-            </field>
-        </record>
-    </data>
+    <!-- Action pour Demandes d'Achat -->
+    <record id="action_purchase_demandes" model="ir.actions.act_window">
+        <field name="name">Demandes d'Achat</field>
+        <field name="res_model">purchase.process.demande.achat</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+    </record>
 </odoo>

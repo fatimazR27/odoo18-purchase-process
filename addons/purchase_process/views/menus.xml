@@ -1,28 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <!-- Main Menu -->
-        <menuitem id="menu_purchase_process_main" name="Processus Achat" sequence="10"/>
-        
-        <!-- Configuration Submenu -->
-        <menuitem id="menu_purchase_process_config" name="Configuration" parent="menu_purchase_process_main" sequence="10"/>
-        
-        <!-- Projects Menu -->
-        <menuitem id="menu_purchase_process_projects" name="Projets" parent="menu_purchase_process_config" action="action_project" sequence="10"/>
-        
-        <!-- Chantiers Menu -->
-        <menuitem id="menu_purchase_process_chantiers" name="Chantiers" parent="menu_purchase_process_config" action="action_chantier" sequence="20"/>
-        
-        <!-- Operations Submenu -->
-        <menuitem id="menu_purchase_process_operations" name="Opérations" parent="menu_purchase_process_main" sequence="20"/>
-        
-        <!-- Demandes Achat Menu -->
-        <menuitem id="menu_purchase_process_demandes" name="Demandes d'Achat" parent="menu_purchase_process_operations" action="action_demande_achat" sequence="10"/>
-        
-        <!-- Réception Menu -->
-        <menuitem id="menu_purchase_process_reception" name="Réception &amp; Contrôle" parent="menu_purchase_process_operations" action="action_reception" sequence="20"/>
-        
-        <!-- Dashboard Menu -->
-        <menuitem id="menu_purchase_process_dashboard" name="Tableau de Bord" parent="menu_purchase_process_main" action="action_dashboard" sequence="30"/>
-    </data>
+    <!-- Menu principal Processus Achat -->
+    <menuitem id="menu_purchase_process_root" name="Processus Achat" sequence="10"/>
+    
+    <!-- Sous-menus -->
+    <menuitem id="menu_purchase_projects" name="Projets" parent="menu_purchase_process_root" 
+              action="action_purchase_projects" sequence="10"/>
+    
+    <menuitem id="menu_purchase_chantiers" name="Chantiers" parent="menu_purchase_process_root" 
+              action="action_purchase_chantiers" sequence="20"/>
+    
+    <menuitem id="menu_purchase_demandes" name="Demandes d'Achat" parent="menu_purchase_process_root" 
+              action="action_purchase_demandes" sequence="30"/>
 </odoo>

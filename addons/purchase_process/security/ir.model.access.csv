@@ -1,7 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_project_user,purchase.process.project.user,model_purchase_process_project,base.group_user,1,1,1,0
-access_project_manager,purchase.process.project.manager,model_purchase_process_project,base.group_system,1,1,1,1
-access_chantier_user,purchase.process.chantier.user,model_purchase_process_chantier,base.group_user,1,1,1,0
-access_chantier_manager,purchase.process.chantier.manager,model_purchase_process_chantier,base.group_system,1,1,1,1
-access_demande_achat_user,purchase.process.demande.achat.user,model_purchase_process_demande_achat,base.group_user,1,1,1,0
-access_demande_achat_manager,purchase.process.demande.achat.manager,model_purchase_process_demande_achat,base.group_system,1,1,1,1
+access_purchase_project_user,purchase.project.user,model_purchase_process_project,base.group_user,1,1,1,0
+access_purchase_chantier_user,purchase.chantier.user,model_purchase_process_chantier,base.group_user,1,1,1,0
+access_purchase_demande_achat_user,purchase.demande.achat.user,model_purchase_process_demande_achat,base.group_user,1,1,1,0
+access_purchase_project_manager,purchase.project.manager,model_purchase_process_project,base.group_system,1,1,1,1
+access_purchase_chantier_manager,purchase.chantier.manager,model_purchase_process_chantier,base.group_system,1,1,1,1
+access_purchase_demande_achat_manager,purchase.demande.achat.manager,model_purchase_process_demande_achat,base.group_system,1,1,1,1

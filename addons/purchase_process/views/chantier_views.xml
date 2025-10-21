@@ -1,79 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <!-- Chantier List View -->
-        <record id="view_chantier_tree" model="ir.ui.view">
-            <field name="name">purchase.process.chantier.tree</field>
-            <field name="model">purchase.process.chantier</field>
-            <field name="arch" type="xml">
-                <list>
-                    <field name="code"/>
-                    <field name="name"/>
-                    <field name="project_id"/>
-                    <field name="localisation"/>
-                    <field name="chef_chantier"/>
-                </list>
-            </field>
-        </record>
+    <!-- Vue List pour Chantiers -->
+    <record id="view_chantier_tree" model="ir.ui.view">
+        <field name="name">purchase.process.chantier.tree</field>
+        <field name="model">purchase.process.chantier</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="project_id"/>
+                <field name="localisation"/>
+                <field name="chef_chantier"/>
+                <field name="conducteur_travaux"/>
+            </list>
+        </field>
+    </record>
 
-        <!-- Chantier Form View -->
-        <record id="view_chantier_form" model="ir.ui.view">
-            <field name="name">purchase.process.chantier.form</field>
-            <field name="model">purchase.process.chantier</field>
-            <field name="arch" type="xml">
-                <form>
-                    <sheet>
+    <!-- Vue Form pour Chantiers -->
+    <record id="view_chantier_form" model="ir.ui.view">
+        <field name="name">purchase.process.chantier.form</field>
+        <field name="model">purchase.process.chantier</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
                         <group>
-                            <group>
-                                <field name="name"/>
-                                <field name="code" readonly="1"/>
-                                <field name="project_id"/>
-                                <field name="localisation"/>
-                            </group>
-                            <group>
-                                <field name="chef_chantier"/>
-                                <field name="conducteur_travaux"/>
-                                <field name="description"/>
-                            </group>
+                            <field name="name" required="1"/>
+                            <field name="code" readonly="1"/>
+                            <field name="project_id" required="1"/>
+                            <field name="localisation"/>
                         </group>
-                        <notebook>
-                            <page string="Demandes d'Achat">
-                                <field name="demande_achat_ids">
-                                    <list>
-                                        <field name="name"/>
-                                        <field name="article"/>
-                                        <field name="quantite"/>
-                                        <field name="urgence"/>
-                                        <field name="date_besoin"/>
-                                        <field name="state"/>
-                                    </list>
-                                </field>
-                            </page>
-                        </notebook>
-                    </sheet>
-                </form>
-            </field>
-        </record>
+                        <group>
+                            <!-- Acteurs du chantier selon documentation -->
+                            <field name="chef_chantier" string="Chef de Chantier"/>
+                            <field name="conducteur_travaux" string="Conducteur de Travaux"/>
+                        </group>
+                    </group>
+                    <field name="description" nolabel="1" placeholder="Description du chantier..."/>
+                    
+                    <!-- Demandes d'achat associées - seulement le nom pour référence -->
+                    <field name="demande_achat_ids" nolabel="1">
+                        <list>
+                            <field name="name"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-        <!-- Chantier Search View -->
-        <record id="view_chantier_search" model="ir.ui.view">
-            <field name="name">purchase.process.chantier.search</field>
-            <field name="model">purchase.process.chantier</field>
-            <field name="arch" type="xml">
-                <search>
-                    <field name="name"/>
-                    <field name="code"/>
-                    <field name="project_id"/>
-                    <field name="localisation"/>
-                </search>
-            </field>
-        </record>
-
-        <!-- Chantier Action -->
-        <record id="action_chantier" model="ir.actions.act_window">
-            <field name="name">Chantiers</field>
-            <field name="res_model">purchase.process.chantier</field>
-            <field name="view_mode">list,form</field>
-        </record>
-    </data>
+    <!-- Action pour Chantiers -->
+    <record id="action_purchase_chantiers" model="ir.actions.act_window">
+        <field name="name">Chantiers</field>
+        <field name="res_model">purchase.process.chantier</field>
+        <field name="view_mode">list,form</field>
+    </record>
 </odoo>

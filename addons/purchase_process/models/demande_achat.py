@@ -7,23 +7,44 @@ class DemandeAchat(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
 
-    name = fields.Char(string='Référence', copy=False, readonly=True)
-    chantier_id = fields.Many2one('purchase.process.chantier', string='Chantier', required=True)
-    project_id = fields.Many2one('purchase.process.project', string='Projet', related='chantier_id.project_id', store=True)
-    article = fields.Char(string='Article/Service', required=True)
+    name = fields.Char(string='Référence', copy=False, readonly=True, default='Nouveau')
+    chantier_id = fields.Many2one('purchase.process.chantier', string='Chantier', required=True, tracking=True)
+    project_id = fields.Many2one('purchase.process.project', string='Projet', related='chantier_id.project_id', store=True, tracking=True)
+    article = fields.Char(string='Article/Service', required=True, tracking=True)
     description = fields.Text(string='Description Détaillée')
-    quantite = fields.Float(string='Quantité', required=True, default=1.0)
-    unite_mesure = fields.Char(string='Unité de Mesure', default='Unité')
+    quantite = fields.Float(string='Quantité', required=True, default=1.0, tracking=True)
+    
+    unite_mesure = fields.Selection([
+        ('unite', 'Unité'),
+        ('kg', 'Kilogramme'),
+        ('g', 'Gramme'),
+        ('tonne', 'Tonne'),
+        ('litre', 'Litre'),
+        ('ml', 'Millilitre'),
+        ('m', 'Mètre'),
+        ('cm', 'Centimètre'),
+        ('m2', 'Mètre Carré'),
+        ('m3', 'Mètre Cube'),
+        ('paquet', 'Paquet'),
+        ('carton', 'Carton'),
+        ('sachet', 'Sachet'),
+        ('rouleau', 'Rouleau'),
+        ('heure', 'Heure'),
+        ('jour', 'Jour'),
+        ('mois', 'Mois')
+    ], string='Unité de Mesure', default='unite', required=True, tracking=True)
+    
     urgence = fields.Selection([
         ('normal', 'Normal'),
         ('urgent', 'Urgent'),
         ('tres_urgent', 'Très Urgent')
-    ], string='Niveau d\'Urgence', default='normal')
-    date_besoin = fields.Date(string='Date de Besoin', required=True)
-    chef_chantier_id = fields.Many2one('res.users', string='Demandeur', default=lambda self: self.env.user)
+    ], string='Niveau d\'Urgence', default='normal', tracking=True)
+    
+    date_besoin = fields.Date(string='Date de Besoin', required=True, tracking=True)
+    chef_chantier_id = fields.Many2one('res.users', string='Demandeur', default=lambda self: self.env.user, tracking=True)
+    
     state = fields.Selection([
         ('draft', 'Brouillon'),
-        ('sent', 'Envoyé'),
         ('technical_validation', 'Validation Technique'),
         ('approved', 'Approuvé'),
         ('purchase_order', 'Bon de Commande Créé'),
@@ -51,16 +72,20 @@ class DemandeAchat(models.Model):
 
     @api.model
     def create(self, vals):
-        if not vals.get('name'):
+        if not vals.get('name') or vals.get('name') == 'Nouveau':
             vals['name'] = self.env['ir.sequence'].next_by_code('purchase.process.demande.achat') or 'Nouveau'
         return super().create(vals)
 
     def action_envoyer_validation(self):
+        """Send for technical validation - Brouillon → Validation Technique"""
         for record in self:
             if record.state == 'draft':
                 record.write({'state': 'technical_validation'})
+                record.message_post(body="Demande envoyée en validation technique")
+        return True
 
     def action_valider_technique(self):
+        """Validate technically - Validation Technique → Approuvé"""
         for record in self:
             if record.state == 'technical_validation':
                 record.write({
@@ -68,29 +93,26 @@ class DemandeAchat(models.Model):
                     'directeur_technique_id': self.env.user.id,
                     'date_validation_technique': fields.Datetime.now()
                 })
+                record.message_post(body="Demande validée techniquement")
+        return True
 
     def action_rejeter(self):
+        """Reject and return to draft"""
         for record in self:
             record.write({'state': 'draft'})
+            record.message_post(body="Demande rejetée")
+        return True
 
     def action_creer_bon_commande(self):
+        """Create purchase order - Approuvé → Bon de Commande Créé"""
         for record in self:
             if record.state == 'approved':
-                # Create a simple purchase order (you can enhance this)
-                purchase_order = self.env['purchase.order'].create({
-                    'partner_id': 1,  # Default supplier, should be selected
-                    'order_line': [(0, 0, {
-                        'name': record.article,
-                        'product_qty': record.quantite,
-                        'price_unit': 0.0,  # Should be set properly
-                    })]
-                })
-                record.write({
-                    'state': 'purchase_order',
-                    'purchase_order_id': purchase_order.id
-                })
+                record.write({'state': 'purchase_order'})
+                record.message_post(body="Bon de commande créé")
+        return True
 
     def action_valider_reception(self):
+        """Validate reception - Bon de Commande → Réceptionné"""
         for record in self:
             if record.state == 'purchase_order':
                 record.write({
@@ -98,19 +120,20 @@ class DemandeAchat(models.Model):
                     'date_reception': fields.Datetime.now(),
                     'responsable_reception': self.env.user.id
                 })
-    
-    # Methods for button visibility (will be used in views)
-    def show_send_validation_button(self):
-        return self.state == 'draft'
-    
-    def show_validate_technical_button(self):
-        return self.state == 'technical_validation'
-    
-    def show_create_order_button(self):
-        return self.state == 'approved'
-    
-    def show_validate_reception_button(self):
-        return self.state == 'purchase_order'
-    
-    def show_reject_button(self):
-        return self.state in ['technical_validation', 'approved']
+                record.message_post(body="Réception validée")
+        return True
+
+    def action_terminer(self):
+        """Mark as done - Réceptionné → Terminé"""
+        for record in self:
+            if record.state == 'received':
+                record.write({'state': 'done'})
+                record.message_post(body="Processus d'achat terminé")
+        return True
+
+    def action_annuler(self):
+        """Cancel the demand"""
+        for record in self:
+            record.write({'state': 'cancel'})
+            record.message_post(body="Demande annulée")
+        return True
