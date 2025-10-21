@@ -28,16 +28,11 @@
                 <form>
                     <header>
                         <field name="state" widget="statusbar"/>
-                        <button name="action_envoyer_validation" string="Envoyer en Validation" type="object" class="btn-primary"
-                                invisible="not show_send_validation_button()"/>
-                        <button name="action_valider_technique" string="Valider Technique" type="object" class="btn-primary"
-                                invisible="not show_validate_technical_button()"/>
-                        <button name="action_creer_bon_commande" string="Créer Bon de Commande" type="object" class="btn-primary"
-                                invisible="not show_create_order_button()"/>
-                        <button name="action_valider_reception" string="Valider Réception" type="object" class="btn-primary"
-                                invisible="not show_validate_reception_button()"/>
-                        <button name="action_rejeter" string="Rejeter" type="object" class="btn-secondary"
-                                invisible="not show_reject_button()"/>
+                        <button name="action_envoyer_validation" string="Envoyer en Validation" type="object" class="btn-primary"/>
+                        <button name="action_valider_technique" string="Valider Technique" type="object" class="btn-primary"/>
+                        <button name="action_creer_bon_commande" string="Créer Bon de Commande" type="object" class="btn-primary"/>
+                        <button name="action_valider_reception" string="Valider Réception" type="object" class="btn-primary"/>
+                        <button name="action_rejeter" string="Rejeter" type="object" class="btn-secondary"/>
                     </header>
                     <sheet>
                         <group>
@@ -82,7 +77,7 @@
                     <field name="chef_chantier_id"/>
                     <filter string="En Attente Validation" name="technical_validation" domain="[('state','=','technical_validation')]"/>
                     <filter string="Approuvées" name="approved" domain="[('state','=','approved')]"/>
-                    <filter string="Urgentes" name="urgent" domain="[('urgency','=','urgent')]"/>
+                    <filter string="Urgentes" name="urgent" domain="[('urgence','=','urgent')]"/>
                     <group expand="0" string="Group By">
                         <filter string="Chantier" name="group_by_chantier" context="{'group_by': 'chantier_id'}"/>
                         <filter string="État" name="group_by_state" context="{'group_by': 'state'}"/>
