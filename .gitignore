@@ -1,0 +1,36 @@
+# Odoo specific
+*.pyc
+__pycache__/
+*.log
+*.pot
+*.csv
+
+# Database and sessions
+/data/
+/logs/
+/sessions/
+/filestore/
+
+# Docker
+docker-compose.override.yml
+.env
+.dockerignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.bak
+*.orig
+
+# Odoo specific temporary files
+/static/
+/translations/
